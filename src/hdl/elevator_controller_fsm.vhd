@@ -93,8 +93,7 @@ architecture Behavioral of elevator_controller_fsm is
 	signal f_Q, f_Q_next: sm_floor;
 
 begin
-
-	-- CONCURRENT STATEMENTS ------------------------------------------------------------------------------
+    -- CONCURRENT STATEMENTS ------------------------------------------------------------------------------
 	-- Next State Logic
     f_Q_next <= s_floor2 when (f_Q = s_floor1 and i_up_down = '1') else -- going up
                 s_floor3 when (f_Q = s_floor2 and i_up_down = '1') else
@@ -118,7 +117,7 @@ begin
 	register_proc : process (i_clk)
     begin
         -- totally synchronous
-        if rising_edge(i_clk) then
+        if (rising_edge(i_clk)) then
             -- synchronous reset
             if i_reset = '1' then
                 f_Q <= s_floor2;

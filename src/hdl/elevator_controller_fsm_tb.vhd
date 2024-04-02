@@ -103,19 +103,56 @@ begin
         w_reset <= '1';  wait for k_clk_period;
             assert w_floor = "0010" report "bad reset" severity failure; 
         -- clear reset
+		w_reset <= '0';
 		
 		-- active UP signal
-		w_up_down <= '1'; 
+		w_up_down <= '1'; wait for k_clk_period;
+		    assert w_floor = "0011" report "bad up from floor2" severity failure;
+		wait for k_clk_period;
+		    assert w_floor = "0100" report "bad up from floor3" severity failure;
+		wait for k_clk_period;
+		    assert w_floor = "0100" report "bad stop on top floor" severity failure;
 		
+		--move elevator back down to first floor to test stop
+		w_up_down <= '0'; wait for k_clk_period * 3;
+		    assert w_floor = "0001" report "bad move down to bottom floor" severity failure;
+		
+		w_up_down <= '1';
 		-- stay on each o_floor for 2 cycles and then move up to the next o_floor
+		--stop on floor 1;
+		w_stop <= '1';  wait for k_clk_period * 2;
+		    assert w_floor = "0001" report "bad wait on floor1" severity failure;
+		w_stop <= '0';  wait for k_clk_period;
+		    assert w_floor = "0010" report "bad up from floor1" severity failure;
+		--stop on floor 2
         w_stop <= '1';  wait for k_clk_period * 2;
             assert w_floor = "0010" report "bad wait on floor2" severity failure;
         w_stop <= '0';  wait for k_clk_period;
             assert w_floor = "0011" report "bad up from floor2" severity failure;
-		-- rest of cases
+		-- stop on floor 3
+		w_stop <= '1';  wait for k_clk_period * 2;
+            assert w_floor = "0011" report "bad wait on floor3" severity failure;
+        w_stop <= '0';  wait for k_clk_period;
+            assert w_floor = "0100" report "bad up from floor3" severity failure;
+        -- stop on floor 4
+        w_stop <= '1';  wait for k_clk_period * 2;
+            assert w_floor = "0100" report "bad wait on floor2" severity failure;
+        w_stop <= '0';  wait for k_clk_period;
+            assert w_floor = "0100" report "bad stop on top floor" severity failure;
         
         -- go back DOWN
-          
+        w_up_down <= '0'; wait for k_clk_period;
+            assert w_floor = "0011" report "bad down from floor4" severity failure;
+        wait for k_clk_period;
+            assert w_floor = "0010" report "bad down from floor3" severity failure;
+        wait for k_clk_period;
+            assert w_floor = "0001" report "bad down from floor2" severity failure;
+        wait for k_clk_period;
+            assert w_floor = "0001" report "bad stop on bottom floor" severity failure;
+        
+        --go back UP
+        w_up_down <= '1'; wait for k_clk_period;
+            assert w_floor = "0010" report "bad up from floor1" severity failure;
 		  	
 		wait; -- wait forever
 	end process;	
