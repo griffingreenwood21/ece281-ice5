@@ -154,6 +154,7 @@ begin
         w_up_down <= '1'; wait for k_clk_period;
             assert w_floor = "0010" report "bad up from floor1" severity failure;
 		  	
+		  	
 		wait; -- wait forever
 	end process;	
 	-----------------------------------------------------	
